@@ -17,14 +17,15 @@ Paso a paso:
 
 import random
 
-# Paso 1: Declaración de variables
-edad_usuario = random.randint(1, 100)  # Asigna una edad aleatoria entre 1 y 100
-dni_proveido = True  # Valor de ejemplo; establecer en función de si se ha proporcionado el DNI o no
+#1 Variables declaradas con valores aleatorios
+edad_usuario = random.randint(1, 99)  # Asigna una edad aleatoria entre 1 y 99
+dni_proveido = random.choice([True, False])  # Asigna aleatoriamente si se ha proporcionado el DNI o no
 
-# Imprimir la edad aleatoria asignada
+# Imprimir los valores aleatorios asignados
 print(f"Edad asignada al usuario: {edad_usuario}")
+print(f"DNI proporcionado: {'Sí' if dni_proveido else 'No'}")
 
-# Paso 2 y 3: Estructura condicional y lógica del condicional
+#2 y #3: Estructura condicional y lógica del condicional
 if dni_proveido:
     if edad_usuario < 12:
         print("No se permite crear una cuenta debido a la edad.")
