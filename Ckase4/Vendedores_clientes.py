@@ -47,4 +47,4 @@ for vendedor in vendedores:
 # Listado de todos los clientes
 print("\nLista de Clientes:")
 for cliente in clientes:
-    print(cliente.nombre)
+    print(f"{cliente.nombre}\n")
