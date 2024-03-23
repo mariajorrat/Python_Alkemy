@@ -23,11 +23,11 @@ class EmpleadoFijo(Empleado):
     def salario(self):
         anios = datetime.now().year - self.anio_ingreso
         if anios < 2:
-            return self.sueldo_basico
+            return round(self.sueldo_basico, 2)
         elif 2 <= anios <= 5:
-            return self.sueldo_basico * 1.05
+            return round(self.sueldo_basico * 1.05, 2)
         else:
-            return self.sueldo_basico * 1.10
+            return round(self.sueldo_basico * 1.10, 2)
 
 class EmpleadoComision(Empleado):
     def __init__(self, dni, nombre, apellido, anio_ingreso, salario_minimo, clientes_captados, monto_por_cliente):
@@ -37,7 +37,7 @@ class EmpleadoComision(Empleado):
         self.monto_por_cliente = monto_por_cliente
 
     def salario(self):
-        return max(self.salario_minimo, self.clientes_captados * self.monto_por_cliente)
+        return round(max(self.salario_minimo, self.clientes_captados * self.monto_por_cliente), 2)
 
 def mostrarSalarios(empleados):
     for empleado in empleados:
@@ -55,28 +55,3 @@ def ingresar_datos_empleado():
     nombre = input("Ingrese nombre: ")
     apellido = input("Ingrese apellido: ")
     anio_ingreso = int(input("Ingrese año de ingreso: "))
-    categoria = Categoria(int(input("Ingrese categoría (1 para FIJO, 2 para COMISION): ")))
-
-    if categoria == Categoria.FIJO:
-        sueldo_basico = float(input("Ingrese sueldo básico: "))
-        return EmpleadoFijo(dni, nombre, apellido, anio_ingreso, sueldo_basico)
-    else:
-        salario_minimo = float(input("Ingrese salario mínimo: "))
-        clientes_captados = int(input("Ingrese número de clientes captados: "))
-        monto_por_cliente = float(input("Ingrese monto por cliente: "))
-        return EmpleadoComision(dni, nombre, apellido, anio_ingreso, salario_minimo, clientes_captados, monto_por_cliente)
-
-def main():
-    empleados = []
-    while True:
-        empleados.append(ingresar_datos_empleado())
-        mas_empleados = input("¿Desea ingresar más empleados? (s/n): ")
-        if mas_empleados.lower() != 's':
-            break
-
-    mostrarSalarios(empleados)
-    empleado_mas_clientes = empleadoConMasClientes(empleados)
-    print(f'El empleado con más clientes es: {empleado_mas_clientes[0]} {empleado_mas_clientes[1]}')
-
-if __name__ == "__main__":
-    main()
