@@ -1,45 +1,82 @@
+from enum import Enum
 from datetime import datetime
 
-class Employee:
-    def __init__(self, id, first_name, last_name, year_joined):
-        self.id = id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.year_joined = int(year_joined)
+class Categoria(Enum):
+    FIJO = 1
+    COMISION = 2
 
-    def displaySalary(self):
+class Empleado:
+    def __init__(self, dni, nombre, apellido, anio_ingreso):
+        self.dni = dni
+        self.nombre = nombre
+        self.apellido = apellido
+        self.anio_ingreso = anio_ingreso
+
+    def salario(self):
         pass
 
-class FixedSalaryEmployee(Employee):
-    def __init__(self, id, first_name, last_name, year_joined, basic_salary):
-        super().__init__(id, first_name, last_name, year_joined)
-        self.basic_salary = basic_salary
+class EmpleadoFijo(Empleado):
+    def __init__(self, dni, nombre, apellido, anio_ingreso, sueldo_basico):
+        super().__init__(dni, nombre, apellido, anio_ingreso)
+        self.sueldo_basico = sueldo_basico
 
-    def displaySalary(self):
-        years = datetime.now().year - self.year_joined
-        if years < 2:
-            additional_percentage = 0
-        elif 2 <= years <= 5:
-            additional_percentage = 0.05
+    def salario(self):
+        anios = datetime.now().year - self.anio_ingreso
+        if anios < 2:
+            return self.sueldo_basico
+        elif 2 <= anios <= 5:
+            return self.sueldo_basico * 1.05
         else:
-            additional_percentage = 0.10
-        return self.basic_salary * (1 + additional_percentage)
+            return self.sueldo_basico * 1.10
 
-class CommissionEmployee(Employee):
-    def __init__(self, id, first_name, last_name, year_joined, minimum_salary, num_clients, amount_per_client):
-        super().__init__(id, first_name, last_name, year_joined)
-        self.minimum_salary = minimum_salary
-        self.num_clients = num_clients
-        self.amount_per_client = amount_per_client
+class EmpleadoComision(Empleado):
+    def __init__(self, dni, nombre, apellido, anio_ingreso, salario_minimo, clientes_captados, monto_por_cliente):
+        super().__init__(dni, nombre, apellido, anio_ingreso)
+        self.salario_minimo = salario_minimo
+        self.clientes_captados = clientes_captados
+        self.monto_por_cliente = monto_por_cliente
 
-    def displaySalary(self):
-        return max(self.minimum_salary, self.num_clients * self.amount_per_client)
+    def salario(self):
+        return max(self.salario_minimo, self.clientes_captados * self.monto_por_cliente)
 
-def employeeWithMostClients(employees):
-    max_clients = 0
-    max_employee = None
-    for employee in employees:
-        if isinstance(employee, CommissionEmployee) and employee.num_clients > max_clients:
-            max_clients = employee.num_clients
-            max_employee = employee
-    return max_employee
+def mostrarSalarios(empleados):
+    for empleado in empleados:
+        print(f'{empleado.nombre} {empleado.apellido}: ${empleado.salario()}')
+
+def empleadoConMasClientes(empleados):
+    max_clientes = max((e for e in empleados if isinstance(e, EmpleadoComision)), key=lambda e: e.clientes_captados, default=None)
+    if max_clientes:
+        return max_clientes.nombre, max_clientes.apellido
+    else:
+        return "N/A", "N/A"
+
+def ingresar_datos_empleado():
+    dni = input("Ingrese DNI: ")
+    nombre = input("Ingrese nombre: ")
+    apellido = input("Ingrese apellido: ")
+    anio_ingreso = int(input("Ingrese año de ingreso: "))
+    categoria = Categoria(int(input("Ingrese categoría (1 para FIJO, 2 para COMISION): ")))
+
+    if categoria == Categoria.FIJO:
+        sueldo_basico = float(input("Ingrese sueldo básico: "))
+        return EmpleadoFijo(dni, nombre, apellido, anio_ingreso, sueldo_basico)
+    else:
+        salario_minimo = float(input("Ingrese salario mínimo: "))
+        clientes_captados = int(input("Ingrese número de clientes captados: "))
+        monto_por_cliente = float(input("Ingrese monto por cliente: "))
+        return EmpleadoComision(dni, nombre, apellido, anio_ingreso, salario_minimo, clientes_captados, monto_por_cliente)
+
+def main():
+    empleados = []
+    while True:
+        empleados.append(ingresar_datos_empleado())
+        mas_empleados = input("¿Desea ingresar más empleados? (s/n): ")
+        if mas_empleados.lower() != 's':
+            break
+
+    mostrarSalarios(empleados)
+    empleado_mas_clientes = empleadoConMasClientes(empleados)
+    print(f'El empleado con más clientes es: {empleado_mas_clientes[0]} {empleado_mas_clientes[1]}')
+
+if __name__ == "__main__":
+    main()
